@@ -1,5 +1,5 @@
-# AnomlyTrigger
-Anomly Trigger with AutoEncoder
+# AnomalyTrigger
+Anomaly Trigger with AutoEncoder
 
 ### Code Structure
 
