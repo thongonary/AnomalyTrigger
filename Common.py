@@ -29,11 +29,13 @@ print(uproot.__version__) # Need latest uproot v3.7.1 for LazzyArrays
 # It should be generic for all kind of flattree
 # LazzyArrays is very new for uproot. Need more testing for performances
 
-folder = "~/Data/Phaes2L1Ntuple/"
+#folder = "~/Data/Phaes2L1Ntuple/"
+folder = "/eos/cms/store/group/cmst3/group/l1tr/cepeda/triggerntuples10X/NeutrinoGun_E_10GeV/"
+sig_folder = "/eos/cms/store/user/dsperka/"
 bg_files  = "%s/NeutrinoGun_E_10GeV_V7_5_2_MERGED.root" % folder
-sg_files  = "%s/VBF_HToInvisible_M125_14TeV_pythia8_PU200_V7_4_2.root" % folder
-sg_files2 = "%s/VBFHToBB_M-125_14TeV_powheg_pythia8_weightfix_V_7_5_2.root" % folder
-sg_files3 = "%s/GluGluToHHTo4B_node_SM_14TeV-madgraph_V7_5_2.root" % folder
+sg_files  = "%s/VBF_HToInvisible_M125_14TeV_pythia8_PU200_V7_4_2.root" % sig_folder
+sg_files2 = "%s/VBFHToBB_M-125_14TeV_powheg_pythia8_weightfix_V_7_5_2.root" % sig_folder
+sg_files3 = "%s/GluGluToHHTo4B_node_SM_14TeV-madgraph_V7_5_2.root" % sig_folder
 
 sampleMap   = {
     "BG"   :  
@@ -77,6 +79,7 @@ class P2L1NTP(Dataset):
                  tree_name="l1PhaseIITree/L1PhaseIITree",
                  sequence_length=50, verbose=False,
                  cutfunc =None):
+        print("Initiating Dataset from {}".format(dir_name))
         self.tree_name = tree_name
         self.features = features
         self.sequence_length = sequence_length
@@ -96,6 +99,7 @@ class P2L1NTP(Dataset):
             return len(self.upTree)
 
     def __getitem__(self, idx):
+        print("getting {}".format(idx))
         reflatnp = []
         event = self.upTree[idx]
         for b, v in self.features.items():
@@ -115,7 +119,7 @@ class P2L1NTP(Dataset):
             elif scale > 1 :
                 tg = tg + scale
             reflatnp.append(tg)
-        org = np.concatenate(reflatnp, axis=0)
+        org = np.concatenate(reflatnp, axis=0).astype(np.float32)
         return org
 
     def GetCutArray(self, cutfunc):
