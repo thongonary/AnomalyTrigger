@@ -180,8 +180,11 @@ def DrawROC(modelname, lossMap, features):
     for k, v in lossMap.items():
         if k == "BG":
             continue
-        reshape_vbg_loss = np.reshape(v, (-1,features))
-        vloss = np.sum(reshape_vbg_loss, axis=1).flatten()
+        if len(v.shape) > 1:
+            reshape_vbg_loss = np.reshape(v, (-1,features))
+            vloss = np.sum(reshape_vbg_loss, axis=1).flatten()
+        else: 
+            vloss = v.flatten()
         Tr = np.concatenate(( np.zeros_like(bloss), np.ones_like(vloss)), axis=0)
         Loss = np.concatenate((bloss, vloss), axis=0)
         fpr, tpr, thresholds = roc_curve(Tr, Loss)
@@ -194,6 +197,6 @@ def DrawROC(modelname, lossMap, features):
     plt.ylabel('Signal Efficiency', fontsize=16)
     plt.savefig("%s_ROC.png" % modelname)
     plt.xlim(0,300)
-    plt.ylim(0,0.6)
+    plt.ylim(0,1.)
     plt.grid(True)
     plt.savefig("%s_ROCZoom.png" % modelname)
